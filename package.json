@@ -1,6 +1,6 @@
 {
   "name": "lista",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Inventory and POS system for a plastering warehouse",
   "main": "main.js",
   "scripts": {
