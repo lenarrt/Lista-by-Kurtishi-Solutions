@@ -14,8 +14,6 @@ import Analytics from './pages/Analytics'
 import LicenseScreen from './pages/LicenseScreen'
 import SetupWizard from './pages/SetupWizard'
 
-const GRACE_PERIOD_MS = 7 * 24 * 60 * 60 * 1000
-
 function App() {
   const { isAuthenticated } = useSelector((state) => state.auth)
   const [currentPage, setCurrentPage] = useState('dashboard')
@@ -39,7 +37,9 @@ function App() {
         return
       }
 
-      const verify = await window.api.verifyLicenseOnline({ license_key: stored.data.license_key })
+      const verify = await window.api.verifyLicenseOnline({
+        license_key: stored.data.license_key,
+      })
 
       if (verify.success) {
         await checkSetup()
@@ -47,14 +47,12 @@ function App() {
       }
 
       if (verify.offline) {
-        const lastVerified = stored.data.last_verified_at
-        if (lastVerified && Date.now() - new Date(lastVerified).getTime() < GRACE_PERIOD_MS) {
-          await checkSetup()
-          return
-        }
-        setLicenseError('License verification failed: no internet connection and the 7-day grace period has expired.')
+        await checkSetup()
+        return
       } else {
-        setLicenseError(verify.message || 'Your license is invalid or has expired.')
+        setLicenseError(
+          verify.message || 'Your license is invalid or has expired.'
+        )
       }
 
       setAppStage('license')
